@@ -1,0 +1,30 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependencias / builds
+node_modules
+dist
+dist-ssr
+
+# Variables de entorno
+.env
+.env.*
+!.env.example
+*.local
+
+# Herramientas de dev / deploy
+.screenshots/
+.vercel
+
+# Editores / sistema
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

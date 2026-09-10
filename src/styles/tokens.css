@@ -1,0 +1,129 @@
+/*
+ * Design tokens — Importadora Precios Bajos / Sorteos
+ * El azul es un PLACEHOLDER: reemplazar --brand-* por el azul exacto del logo.
+ */
+:root {
+  /* ---- Marca (azul) — PLACEHOLDER ---- */
+  --brand-50:  #eef4ff;
+  --brand-100: #dbe7ff;
+  --brand-200: #bcd0ff;
+  --brand-300: #8fb0ff;
+  --brand-400: #5c86f7;
+  --brand-500: #1957d8;   /* principal */
+  --brand-600: #1246b4;
+  --brand-700: #0f3a92;
+  --brand-800: #102f6f;
+  --brand-900: #0f2547;   /* azul oscuro para textos / elementos fuertes */
+
+  --color-primary: var(--brand-500);
+  --color-primary-hover: var(--brand-600);
+  --color-primary-active: var(--brand-700);
+  --color-primary-contrast: #ffffff;
+  --color-ink: var(--brand-900);
+
+  /* ---- Superficies ---- */
+  --color-bg: #f4f6fa;          /* gris casi blanco: fondo general */
+  --color-bg-2: #eef1f6;
+  --color-surface: #ffffff;     /* tarjetas */
+  --color-surface-sunken: #f7f9fc;
+
+  /* ---- Texto ---- */
+  --color-text: #16233b;
+  --color-text-muted: #566178;
+  --color-text-subtle: #8b95a7;
+  --color-text-on-brand: #ffffff;
+
+  /* ---- Bordes / divisores ---- */
+  --color-border: #e6e9f0;
+  --color-border-strong: #d3d9e4;
+  --color-focus: var(--brand-400);
+
+  /* ---- Acento (uso puntual: premios, promos) ---- */
+  --color-accent: #f5a524;
+  --color-accent-soft: #fff4e0;
+
+  /* ---- Semánticos ---- */
+  --color-success: #1a7f4b;
+  --color-success-soft: #e7f5ec;
+  --color-warning: #b26a00;
+  --color-warning-soft: #fdf1dd;
+  --color-danger: #c23934;
+  --color-danger-soft: #fbeae9;
+
+  /* ---- Radios (moderados) ---- */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* ---- Sombras (muy suaves) ---- */
+  --shadow-xs: 0 1px 2px rgba(15, 37, 71, 0.05);
+  --shadow-sm: 0 1px 3px rgba(15, 37, 71, 0.06), 0 1px 2px rgba(15, 37, 71, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 37, 71, 0.07), 0 2px 4px rgba(15, 37, 71, 0.04);
+  --shadow-lg: 0 12px 32px rgba(15, 37, 71, 0.10), 0 4px 8px rgba(15, 37, 71, 0.05);
+  --shadow-brand: 0 4px 14px rgba(25, 87, 216, 0.12);
+
+  /* ---- Espaciado (base 4px) ---- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 2.5rem;
+  --space-8: 3rem;
+  --space-10: 4rem;
+  --space-12: 5rem;
+  --space-16: 7rem;
+
+  /* ---- Tipografía ---- */
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --text-4xl: 3rem;
+  --text-5xl: 3.75rem;
+
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-normal: 1.6;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ---- Layout ---- */
+  --container: 1140px;
+  --container-narrow: 760px;
+  --header-h: 68px;
+
+  /* ---- Movimiento ---- */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 120ms;
+  --dur: 200ms;
+  --dur-slow: 360ms;
+
+  /* ---- z-index ---- */
+  --z-header: 100;
+  --z-drawer: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur: 0ms;
+    --dur-slow: 0ms;
+  }
+}

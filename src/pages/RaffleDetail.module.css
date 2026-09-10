@@ -1,0 +1,103 @@
+.crumbs {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+.msg {
+  color: var(--color-text-muted);
+}
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+.title {
+  font-size: var(--text-2xl);
+}
+.meta {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+.stat {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.statLabel {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-subtle);
+}
+.statValue {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+.statSub {
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+.section {
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  margin-bottom: var(--space-3);
+}
+.tiers {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+.tiers th {
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+  border-bottom: 1px solid var(--color-border);
+}
+.tiers td {
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--color-border);
+  font-variant-numeric: tabular-nums;
+}
+.tiers tr:last-child td {
+  border-bottom: 0;
+}
+.muted {
+  color: var(--color-text-muted);
+}
+.pop {
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+  font-weight: var(--weight-semibold);
+}
+.prose {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  white-space: pre-line;
+  max-width: 60ch;
+}
