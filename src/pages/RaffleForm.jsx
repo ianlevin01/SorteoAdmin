@@ -20,7 +20,9 @@ const EMPTY = {
   prizeTitle: '',
   prizeDescription: '',
   images: [],
+  mode: 'sequential',
   chanceTiers: [newTier()],
+  pricePerNumber: '',
   totalNumbers: 100000,
   status: 'draft',
   featured: false,
@@ -60,12 +62,14 @@ export default function RaffleForm() {
         prizeTitle: r.prizeTitle || '',
         prizeDescription: r.prizeDescription || '',
         images: r.images || [],
+        mode: r.mode || 'sequential',
         chanceTiers: (r.chanceTiers?.length ? r.chanceTiers : [newTier()]).map((t) => ({
           id: t.id || `tier-${crypto.randomUUID().slice(0, 8)}`,
           chances: t.chances,
           price: t.price,
           popular: Boolean(t.popular),
         })),
+        pricePerNumber: r.pricePerNumber ?? '',
         totalNumbers: r.totalNumbers ?? 100000,
         status: r.status || 'draft',
         featured: Boolean(r.featured),
@@ -110,15 +114,23 @@ export default function RaffleForm() {
   const makeCover = (url) =>
     setForm((f) => ({ ...f, images: [url, ...f.images.filter((u) => u !== url)] }));
 
+  const isPick = form.mode === 'pick';
+
   const validate = () => {
     const e = {};
     if (form.title.trim().length < 3) e.title = 'Mínimo 3 caracteres';
     if (!Number(form.totalNumbers) || Number(form.totalNumbers) < 1) e.totalNumbers = 'Requerido';
-    if (!form.chanceTiers.length) e.chanceTiers = 'Cargá al menos una opción';
-    form.chanceTiers.forEach((t, i) => {
-      if (!Number(t.chances) || Number(t.chances) < 1) e[`tier-${i}-chances`] = 'Inválido';
-      if (Number(t.price) < 0) e[`tier-${i}-price`] = 'Inválido';
-    });
+    if (isPick) {
+      if (!Number(form.pricePerNumber) || Number(form.pricePerNumber) <= 0) {
+        e.pricePerNumber = 'Requerido';
+      }
+    } else {
+      if (!form.chanceTiers.length) e.chanceTiers = 'Cargá al menos una opción';
+      form.chanceTiers.forEach((t, i) => {
+        if (!Number(t.chances) || Number(t.chances) < 1) e[`tier-${i}-chances`] = 'Inválido';
+        if (Number(t.price) < 0) e[`tier-${i}-price`] = 'Inválido';
+      });
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -135,12 +147,16 @@ export default function RaffleForm() {
       prizeDescription: form.prizeDescription.trim() || undefined,
       images: form.images,
       coverImage: form.images[0],
-      chanceTiers: form.chanceTiers.map((t) => ({
-        id: t.id,
-        chances: Number(t.chances),
-        price: Number(t.price),
-        popular: t.popular || undefined,
-      })),
+      mode: form.mode,
+      chanceTiers: isPick
+        ? undefined
+        : form.chanceTiers.map((t) => ({
+            id: t.id,
+            chances: Number(t.chances),
+            price: Number(t.price),
+            popular: t.popular || undefined,
+          })),
+      pricePerNumber: isPick ? Number(form.pricePerNumber) : undefined,
       totalNumbers: Number(form.totalNumbers),
       status: form.status,
       featured: form.featured,
@@ -231,61 +247,111 @@ export default function RaffleForm() {
         </section>
 
         <section className={styles.card}>
-          <h2 className={styles.section}>Opciones de compra (chances)</h2>
-          {errors.chanceTiers && <p className={styles.err}>{errors.chanceTiers}</p>}
-          <div className={styles.tiers}>
-            <div className={styles.tierHead}>
-              <span>Números</span>
-              <span>Precio</span>
-              <span>Más elegido</span>
-              <span />
-            </div>
-            {form.chanceTiers.map((t, i) => (
-              <div key={t.id} className={styles.tierRow}>
+          <h2 className={styles.section}>Tipo de sorteo</h2>
+          <Field
+            label="Cómo se eligen los números"
+            hint={
+              editing
+                ? 'No se puede cambiar una vez creado el sorteo.'
+                : 'Correlativos: se asignan solos, en orden. Elegí tu número: el comprador toca el número que quiere.'
+            }
+          >
+            {(p) => (
+              <Select {...p} value={form.mode} disabled={editing} onChange={(e) => set('mode', e.target.value)}>
+                <option value="sequential">Números correlativos (automático)</option>
+                <option value="pick">Elegí tu número</option>
+              </Select>
+            )}
+          </Field>
+        </section>
+
+        {isPick ? (
+          <section className={styles.card}>
+            <h2 className={styles.section}>Precio por número</h2>
+            <Field
+              label="Precio de cada número"
+              required
+              error={errors.pricePerNumber}
+              hint="Se cobra este precio por cada número que elige el comprador."
+            >
+              {(p) => (
                 <Input
-                  type="number"
-                  min="1"
-                  value={t.chances}
-                  onChange={(e) => setTier(i, { chances: e.target.value })}
-                  aria-invalid={errors[`tier-${i}-chances`] ? true : undefined}
-                />
-                <Input
+                  {...p}
                   type="number"
                   min="0"
-                  step="100"
-                  value={t.price}
-                  onChange={(e) => setTier(i, { price: e.target.value })}
+                  step="50"
+                  value={form.pricePerNumber}
+                  onChange={(e) => set('pricePerNumber', e.target.value)}
                 />
-                <label className={styles.check}>
-                  <input
-                    type="checkbox"
-                    checked={t.popular}
-                    onChange={(e) => setTier(i, { popular: e.target.checked })}
-                  />
-                </label>
-                <button
-                  type="button"
-                  className={styles.rm}
-                  onClick={() => removeTier(i)}
-                  disabled={form.chanceTiers.length === 1}
-                >
-                  ✕
-                </button>
+              )}
+            </Field>
+            {Number(form.pricePerNumber) > 0 && (
+              <p className={styles.help}>{formatMoney(Number(form.pricePerNumber))} por número</p>
+            )}
+          </section>
+        ) : (
+          <section className={styles.card}>
+            <h2 className={styles.section}>Opciones de compra (chances)</h2>
+            {errors.chanceTiers && <p className={styles.err}>{errors.chanceTiers}</p>}
+            <div className={styles.tiers}>
+              <div className={styles.tierHead}>
+                <span>Números</span>
+                <span>Precio</span>
+                <span>Más elegido</span>
+                <span />
               </div>
-            ))}
-          </div>
-          <Button type="button" variant="secondary" size="sm" onClick={addTier}>
-            + Agregar opción
-          </Button>
-          {Number.isFinite(totalPreview) && (
-            <p className={styles.help}>Desde {formatMoney(totalPreview)}</p>
-          )}
-        </section>
+              {form.chanceTiers.map((t, i) => (
+                <div key={t.id} className={styles.tierRow}>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={t.chances}
+                    onChange={(e) => setTier(i, { chances: e.target.value })}
+                    aria-invalid={errors[`tier-${i}-chances`] ? true : undefined}
+                  />
+                  <Input
+                    type="number"
+                    min="0"
+                    step="100"
+                    value={t.price}
+                    onChange={(e) => setTier(i, { price: e.target.value })}
+                  />
+                  <label className={styles.check}>
+                    <input
+                      type="checkbox"
+                      checked={t.popular}
+                      onChange={(e) => setTier(i, { popular: e.target.checked })}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className={styles.rm}
+                    onClick={() => removeTier(i)}
+                    disabled={form.chanceTiers.length === 1}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+            <Button type="button" variant="secondary" size="sm" onClick={addTier}>
+              + Agregar opción
+            </Button>
+            {Number.isFinite(totalPreview) && (
+              <p className={styles.help}>Desde {formatMoney(totalPreview)}</p>
+            )}
+          </section>
+        )}
 
         <section className={styles.card}>
           <h2 className={styles.section}>Configuración</h2>
           <div className={styles.grid2}>
-            <Field label="Total de números" required error={errors.totalNumbers} hint="Del 0 al total−1.">
+            <Field
+              label="Total de números"
+              required
+              error={errors.totalNumbers}
+              hint={isPick ? 'Se puede elegir cualquier número del 0 al total−1.' : 'Del 0 al total−1.'}
+            >
               {(p) => (
                 <Input {...p} type="number" min="1" value={form.totalNumbers} onChange={(e) => set('totalNumbers', e.target.value)} />
               )}

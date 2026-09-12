@@ -30,7 +30,8 @@ export default function RaffleDetail() {
         <div>
           <h1 className={styles.title}>{r.title}</h1>
           <p className={styles.meta}>
-            {r.status} {r.drawDate && `· sorteo el ${formatDate(r.drawDate)}`}{' '}
+            {r.status} · {r.mode === 'pick' ? 'elegí tu número' : 'números correlativos'}
+            {r.drawDate && ` · sorteo el ${formatDate(r.drawDate)}`}{' '}
             {r.featured && '· destacado'}
           </p>
         </div>
@@ -46,31 +47,41 @@ export default function RaffleDetail() {
         <Stat label="Avance" value={s?.progress != null ? `${s.progress}%` : '—'} />
       </div>
 
-      <section className={styles.card}>
-        <h2 className={styles.section}>Opciones de compra</h2>
-        <table className={styles.tiers}>
-          <thead>
-            <tr>
-              <th>Números</th>
-              <th>Precio</th>
-              <th>Precio x número</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {[...(r.chanceTiers || [])]
-              .sort((a, b) => a.chances - b.chances)
-              .map((t) => (
-                <tr key={t.id}>
-                  <td>{formatInt(t.chances)}</td>
-                  <td>{formatMoney(t.price)}</td>
-                  <td className={styles.muted}>{formatMoney(t.price / t.chances)}</td>
-                  <td>{t.popular && <span className={styles.pop}>Más elegido</span>}</td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      </section>
+      {r.mode === 'pick' ? (
+        <section className={styles.card}>
+          <h2 className={styles.section}>Precio por número</h2>
+          <p className={styles.prose}>
+            {formatMoney(r.pricePerNumber || 0)} por número, elegible entre 0 y{' '}
+            {formatInt((r.totalNumbers || 1) - 1)}.
+          </p>
+        </section>
+      ) : (
+        <section className={styles.card}>
+          <h2 className={styles.section}>Opciones de compra</h2>
+          <table className={styles.tiers}>
+            <thead>
+              <tr>
+                <th>Números</th>
+                <th>Precio</th>
+                <th>Precio x número</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {[...(r.chanceTiers || [])]
+                .sort((a, b) => a.chances - b.chances)
+                .map((t) => (
+                  <tr key={t.id}>
+                    <td>{formatInt(t.chances)}</td>
+                    <td>{formatMoney(t.price)}</td>
+                    <td className={styles.muted}>{formatMoney(t.price / t.chances)}</td>
+                    <td>{t.popular && <span className={styles.pop}>Más elegido</span>}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </section>
+      )}
 
       {r.prizeDescription && (
         <section className={styles.card}>

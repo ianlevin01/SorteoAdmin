@@ -56,6 +56,7 @@ export default function Raffles() {
                       <Link to={`/sorteos/${r.raffleId}`} className={styles.name}>
                         {r.title}
                       </Link>
+                      {r.mode === 'pick' && <span className={styles.featured}>Elegí tu número</span>}
                       {r.featured && <span className={styles.featured}>Destacado</span>}
                     </td>
                     <td>
@@ -65,7 +66,7 @@ export default function Raffles() {
                       {r.drawDate ? formatDate(r.drawDate) : '—'}
                     </td>
                     <td className={styles.num}>
-                      {formatInt(r.assignedCount || 0)} / {formatInt(r.totalNumbers || 0)}
+                      {r.mode === 'pick' ? '—' : formatInt(r.assignedCount || 0)} / {formatInt(r.totalNumbers || 0)}
                     </td>
                     <td className={styles.actions}>
                       <Link to={`/sorteos/${r.raffleId}/editar`}>Editar</Link>
