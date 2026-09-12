@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import clsx from 'clsx';
 import { useAuth } from '../context/AuthContext.jsx';
+import logo from '../assets/logo.jpg';
 import styles from './Layout.module.css';
 
 const NAV = [
@@ -14,7 +15,7 @@ export function Layout() {
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
-          <span className={styles.brandMark}>RS</span>
+          <img src={logo} alt="" className={styles.brandMark} />
           <span>Panel</span>
         </div>
         <nav className={styles.nav}>
