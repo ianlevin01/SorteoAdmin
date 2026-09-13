@@ -138,7 +138,7 @@ export default function OrderDetail() {
 
           {v && (
             <section className={styles.card}>
-              <h2 className={styles.section}>Verificación automática</h2>
+              <h2 className={styles.section}>Revisión del comprobante</h2>
               {checks.length > 0 && (
                 <ul className={styles.checklist}>
                   {checks.map(([key, label]) => (
@@ -171,7 +171,7 @@ export default function OrderDetail() {
                 </ul>
               )}
               {!checks.length && !extracted.length && !v.issues?.length && (
-                <p className={styles.msg}>Todavía no se pudo revisar automáticamente.</p>
+                <p className={styles.msg}>Todavía no hay datos de revisión para este comprobante.</p>
               )}
             </section>
           )}
@@ -201,7 +201,7 @@ export default function OrderDetail() {
             {!canReview ? (
               <p className={styles.reviewed}>
                 {o.status === 'approved' &&
-                  `Aprobado ${o.approvedBy === 'auto' ? 'automáticamente' : `por ${o.approvedBy || '—'}`} el ${formatDateTime(o.approvedAt)}.`}
+                  `Aprobado ${o.approvedBy === 'auto' ? 'sin revisión manual' : `por ${o.approvedBy || '—'}`} el ${formatDateTime(o.approvedAt)}.`}
                 {o.status === 'rejected' &&
                   `Rechazado por ${o.reviewedBy || '—'} el ${formatDateTime(o.reviewedAt)}. ${o.rejectionReason || ''}`}
                 {(o.status === 'expired' || o.status === 'cancelled' || o.status === 'failed') &&
