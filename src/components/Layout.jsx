@@ -6,7 +6,7 @@ import styles from './Layout.module.css';
 
 const NAV = [
   { to: '/sorteos', label: 'Sorteos' },
-  // { to: '/comprobantes', label: 'Comprobantes' },  // próximamente
+  { to: '/pedidos', label: 'Pedidos' },
 ];
 
 export function Layout() {

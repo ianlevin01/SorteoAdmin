@@ -1,0 +1,192 @@
+.crumbs {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+.msg,
+.error {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+.error {
+  color: var(--color-danger);
+}
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+.title {
+  font-size: var(--text-2xl);
+}
+.meta {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+.section {
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  margin-bottom: var(--space-3);
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+.summaryItem dt {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-subtle);
+}
+.summaryItem dd {
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+.pending_payment {
+  background: var(--color-bg-2);
+  color: var(--color-text-muted);
+}
+.receipt_submitted {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+.receipt_rejected,
+.rejected {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+.approved {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+.expired,
+.cancelled,
+.failed {
+  background: var(--color-bg-2);
+  color: var(--color-text-subtle);
+}
+
+.receiptBox {
+  background: var(--color-surface-sunken);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
+.receiptImg {
+  max-width: 100%;
+  max-height: 480px;
+  display: block;
+}
+.receiptLink {
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.checklist {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.checkOk,
+.checkBad {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: var(--text-sm);
+  padding: 0.5rem 0.7rem;
+  border-radius: var(--radius-sm);
+}
+.checkOk {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+.checkBad {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+.checkIcon {
+  font-weight: var(--weight-bold);
+}
+
+.extracted {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+.extracted td {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.extracted td:first-child {
+  color: var(--color-text-subtle);
+  width: 40%;
+}
+.extracted tr:last-child td {
+  border-bottom: 0;
+}
+
+.issues {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.actionRow {
+  display: flex;
+  gap: var(--space-3);
+}
+.reviewed {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.empty {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-text-subtle);
+  font-size: var(--text-sm);
+}

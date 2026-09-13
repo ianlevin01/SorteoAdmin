@@ -75,10 +75,26 @@
 }
 .actions {
   text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
 }
 .actions a {
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
+}
+.deleteLink {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-danger);
+}
+.deleteLink:hover {
+  text-decoration: underline;
+}
+.deleteLink:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .badge {

@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useRaffles } from '../hooks/useAdmin.js';
+import { useRaffles, useDeleteRaffle } from '../hooks/useAdmin.js';
 import { Button } from '../components/Button.jsx';
 import { formatDate, formatInt } from '../lib/format.js';
 import styles from './Raffles.module.css';
@@ -13,6 +14,16 @@ const STATUS = {
 
 export default function Raffles() {
   const { data: raffles, isLoading, isError, error } = useRaffles();
+  const deleteRaffle = useDeleteRaffle();
+  const [deleteError, setDeleteError] = useState('');
+
+  const onDelete = (raffle) => {
+    setDeleteError('');
+    if (!window.confirm(`¿Eliminar "${raffle.title}"? Esto no se puede deshacer.`)) return;
+    deleteRaffle.mutate(raffle.raffleId, {
+      onError: (err) => setDeleteError(err.message || 'No se pudo eliminar'),
+    });
+  };
 
   return (
     <div>
@@ -25,6 +36,7 @@ export default function Raffles() {
 
       {isLoading && <p className={styles.msg}>Cargando…</p>}
       {isError && <p className={styles.error}>{error?.message}</p>}
+      {deleteError && <p className={styles.error}>{deleteError}</p>}
 
       {raffles && raffles.length === 0 && (
         <div className={styles.empty}>
@@ -70,6 +82,14 @@ export default function Raffles() {
                     </td>
                     <td className={styles.actions}>
                       <Link to={`/sorteos/${r.raffleId}/editar`}>Editar</Link>
+                      <button
+                        type="button"
+                        className={styles.deleteLink}
+                        onClick={() => onDelete(r)}
+                        disabled={deleteRaffle.isPending}
+                      >
+                        Eliminar
+                      </button>
                     </td>
                   </tr>
                 );
