@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   useOrder,
@@ -69,6 +69,8 @@ export default function OrderDetail() {
   const reject = useRejectOrder(orderId);
   const [reason, setReason] = useState('');
   const [showReject, setShowReject] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
+  useEffect(() => setImgFailed(false), [receiptUrl.data?.url]);
 
   if (order.isLoading) return <p className={styles.msg}>Cargando…</p>;
   if (order.isError || !o) {
@@ -124,10 +126,26 @@ export default function OrderDetail() {
                     Abrir comprobante (PDF) ↗
                   </a>
                 </div>
+              ) : imgFailed ? (
+                <div className={styles.receiptBox}>
+                  <a
+                    className={styles.receiptLink}
+                    href={receiptUrl.data.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    No pudimos mostrar una vista previa. Abrir el archivo ↗
+                  </a>
+                </div>
               ) : (
                 <div className={styles.receiptBox}>
                   <a href={receiptUrl.data.url} target="_blank" rel="noreferrer">
-                    <img src={receiptUrl.data.url} alt="Comprobante" className={styles.receiptImg} />
+                    <img
+                      src={receiptUrl.data.url}
+                      alt="Comprobante"
+                      className={styles.receiptImg}
+                      onError={() => setImgFailed(true)}
+                    />
                   </a>
                 </div>
               )
