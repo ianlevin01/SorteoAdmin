@@ -103,3 +103,17 @@ export function useRejectOrder(orderId) {
     onSuccess: () => invalidateOrder(qc, orderId),
   });
 }
+
+// ---------------- Sorteos "elegí tu número": números ya vendidos ----------------
+
+export function useBlockNumbers(raffleId) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ numbers, note }) =>
+      api(`/admin/raffles/${raffleId}/numbers/block`, { method: 'POST', body: { numbers, note } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'raffle', raffleId, 'stats'] });
+      qc.invalidateQueries({ queryKey: ['raffle-numbers', raffleId] });
+    },
+  });
+}
