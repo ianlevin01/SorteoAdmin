@@ -117,3 +117,44 @@ export function useBlockNumbers(raffleId) {
     },
   });
 }
+
+// ---------------- Consultas (chat con la IA escalado a un asesor) ----------------
+
+export function useInquiries(status = 'open') {
+  return useQuery({
+    queryKey: ['admin', 'inquiries', status],
+    queryFn: () => api(`/admin/inquiries?status=${encodeURIComponent(status)}`),
+    // Para notar una consulta nueva sin tener que recargar la página.
+    refetchInterval: 15_000,
+  });
+}
+
+export function useInquiry(inquiryId) {
+  return useQuery({
+    queryKey: ['admin', 'inquiry', inquiryId],
+    queryFn: () => api(`/admin/inquiries/${inquiryId}`),
+    enabled: Boolean(inquiryId),
+    refetchInterval: (query) => (query.state.data?.inquiry?.status === 'open' ? 5000 : false),
+  });
+}
+
+function invalidateInquiry(qc, inquiryId) {
+  qc.invalidateQueries({ queryKey: ['admin', 'inquiries'] });
+  qc.invalidateQueries({ queryKey: ['admin', 'inquiry', inquiryId] });
+}
+
+export function useReplyInquiry(inquiryId) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (text) => api(`/admin/inquiries/${inquiryId}/messages`, { method: 'POST', body: { text } }),
+    onSuccess: () => invalidateInquiry(qc, inquiryId),
+  });
+}
+
+export function useCloseInquiry(inquiryId) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => api(`/admin/inquiries/${inquiryId}/close`, { method: 'POST' }),
+    onSuccess: () => invalidateInquiry(qc, inquiryId),
+  });
+}

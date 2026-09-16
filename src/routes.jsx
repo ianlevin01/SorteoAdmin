@@ -7,6 +7,8 @@ import RaffleForm from './pages/RaffleForm.jsx';
 import RaffleDetail from './pages/RaffleDetail.jsx';
 import Orders from './pages/Orders.jsx';
 import OrderDetail from './pages/OrderDetail.jsx';
+import Inquiries from './pages/Inquiries.jsx';
+import InquiryDetail from './pages/InquiryDetail.jsx';
 import NotFound from './pages/NotFound.jsx';
 
 function RequireAuth({ children }) {
@@ -36,6 +38,8 @@ export function AppRoutes() {
         <Route path="sorteos/:raffleId/editar" element={<RaffleForm />} />
         <Route path="pedidos" element={<Orders />} />
         <Route path="pedidos/:orderId" element={<OrderDetail />} />
+        <Route path="consultas" element={<Inquiries />} />
+        <Route path="consultas/:inquiryId" element={<InquiryDetail />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
