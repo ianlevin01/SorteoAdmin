@@ -1,0 +1,105 @@
+.head {
+  margin-bottom: var(--space-4);
+}
+.title {
+  font-size: var(--text-2xl);
+}
+.subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+.msg,
+.error {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+.error {
+  color: var(--color-danger);
+}
+
+.searchWrap {
+  margin-bottom: var(--space-4);
+  max-width: 24rem;
+}
+.search {
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-border-strong);
+  background: var(--color-surface);
+  font-size: var(--text-sm);
+}
+.search:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-8);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+}
+
+.tableWrap {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+.table th {
+  text-align: left;
+  padding: 0.7rem 0.9rem;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-subtle);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+.table td {
+  padding: 0.8rem 0.9rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.table tr:last-child td {
+  border-bottom: 0;
+}
+.row {
+  cursor: pointer;
+}
+.row:hover td {
+  background: var(--brand-50);
+}
+.name {
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.muted {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.adminTag {
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-primary);
+  background: var(--brand-50);
+  border: 1px solid var(--brand-200);
+  border-radius: var(--radius-pill);
+  padding: 0.1rem 0.45rem;
+}

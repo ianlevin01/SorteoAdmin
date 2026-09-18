@@ -5,6 +5,7 @@ import {
   useOrderReceiptUrl,
   useApproveOrder,
   useRejectOrder,
+  useCustomer,
 } from '../hooks/useAdmin.js';
 import { Field, Textarea } from '../components/Field.jsx';
 import { Button } from '../components/Button.jsx';
@@ -63,6 +64,8 @@ export default function OrderDetail() {
   const navigate = useNavigate();
   const order = useOrder(orderId);
   const o = order.data;
+  const customer = useCustomer(o?.dni);
+  const c = customer.data?.user;
 
   const receiptUrl = useOrderReceiptUrl(orderId, Boolean(o?.receipt?.key));
   const approve = useApproveOrder(orderId);
@@ -99,6 +102,23 @@ export default function OrderDetail() {
           <h1 className={styles.title}>{o.buyerName || 'Comprador'}</h1>
           <p className={styles.meta}>
             DNI {o.dni} · {o.raffleTitle} · {formatDateTime(o.createdAt)}
+          </p>
+          <p className={styles.contactLine}>
+            {c?.email && <span>{c.email}</span>}
+            {c?.whatsapp && (
+              <a href={`https://wa.me/${c.whatsapp}`} target="_blank" rel="noreferrer">
+                {c.whatsapp}
+              </a>
+            )}
+            {c?.address && <span>{c.address}</span>}
+            {(c?.city || c?.province) && (
+              <span>
+                {c.city}
+                {c.city && c.province ? ', ' : ''}
+                {c.province}
+              </span>
+            )}
+            <Link to={`/clientes/${o.dni}`}>Ver perfil completo →</Link>
           </p>
         </div>
         <span className={`${styles.badge} ${styles[o.status] || ''}`}>

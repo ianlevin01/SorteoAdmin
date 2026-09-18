@@ -8,6 +8,7 @@ const NAV = [
   { to: '/sorteos', label: 'Sorteos' },
   { to: '/pedidos', label: 'Pedidos' },
   { to: '/consultas', label: 'Consultas' },
+  { to: '/clientes', label: 'Clientes' },
 ];
 
 export function Layout() {

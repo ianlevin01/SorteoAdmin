@@ -181,3 +181,21 @@ export function useCloseInquiry(inquiryId) {
     onSuccess: () => invalidateInquiry(qc, inquiryId),
   });
 }
+
+// ---------------- Clientes ----------------
+
+export function useSearchCustomers(query) {
+  return useQuery({
+    queryKey: ['admin', 'customers', query],
+    queryFn: () => api(`/admin/users?q=${encodeURIComponent(query)}`),
+  });
+}
+
+/** Perfil completo de un cliente (todos sus datos) + su historial de pedidos. */
+export function useCustomer(dni) {
+  return useQuery({
+    queryKey: ['admin', 'customer', dni],
+    queryFn: () => api(`/admin/users/${dni}`),
+    enabled: Boolean(dni),
+  });
+}
