@@ -24,6 +24,15 @@ export function useRaffleStats(raffleId) {
   });
 }
 
+/** Todos los tickets (números tomados/reservados) de un sorteo "elegí tu número". */
+export function useRaffleTickets(raffleId) {
+  return useQuery({
+    queryKey: ['admin', 'raffle', raffleId, 'tickets'],
+    queryFn: () => api(`/admin/raffles/${raffleId}/tickets`),
+    enabled: Boolean(raffleId),
+  });
+}
+
 export function useCreateRaffle() {
   const qc = useQueryClient();
   return useMutation({
@@ -113,6 +122,7 @@ export function useBlockNumbers(raffleId) {
       api(`/admin/raffles/${raffleId}/numbers/block`, { method: 'POST', body: { numbers, note } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin', 'raffle', raffleId, 'stats'] });
+      qc.invalidateQueries({ queryKey: ['admin', 'raffle', raffleId, 'tickets'] });
       qc.invalidateQueries({ queryKey: ['raffle-numbers', raffleId] });
     },
   });
@@ -125,6 +135,7 @@ export function useAssignNumbers(raffleId) {
       api(`/admin/raffles/${raffleId}/numbers/assign`, { method: 'POST', body: { numbers, dni, name, note } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin', 'raffle', raffleId, 'stats'] });
+      qc.invalidateQueries({ queryKey: ['admin', 'raffle', raffleId, 'tickets'] });
       qc.invalidateQueries({ queryKey: ['raffle-numbers', raffleId] });
     },
   });
