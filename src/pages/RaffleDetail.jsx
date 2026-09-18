@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useRaffle, useRaffleStats, useBlockNumbers } from '../hooks/useAdmin.js';
+import { useRaffle, useRaffleStats, useBlockNumbers, useAssignNumbers } from '../hooks/useAdmin.js';
 import { Button } from '../components/Button.jsx';
 import { Field, Textarea, Input } from '../components/Field.jsx';
 import { formatDate, formatInt, formatMoney } from '../lib/format.js';
@@ -106,6 +106,8 @@ export default function RaffleDetail() {
         </section>
       )}
 
+      {r.mode === 'pick' && <AssignNumbersCard raffleId={raffleId} totalNumbers={r.totalNumbers} />}
+
       {r.mode === 'pick' && <BlockNumbersCard raffleId={raffleId} totalNumbers={r.totalNumbers} />}
 
       {r.prizeDescription && (
@@ -115,6 +117,105 @@ export default function RaffleDetail() {
         </section>
       )}
     </div>
+  );
+}
+
+function AssignNumbersCard({ raffleId, totalNumbers }) {
+  const [text, setText] = useState('');
+  const [dni, setDni] = useState('');
+  const [name, setName] = useState('');
+  const [note, setNote] = useState('');
+  const [formError, setFormError] = useState('');
+  const [result, setResult] = useState(null);
+  const assign = useAssignNumbers(raffleId);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    setFormError('');
+    setResult(null);
+    const cleanDni = dni.replace(/\D/g, '');
+    if (!/^\d{7,8}$/.test(cleanDni)) {
+      setFormError('DNI inválido (7 u 8 dígitos)');
+      return;
+    }
+    const { numbers, invalid } = parseNumberRanges(text);
+    if (invalid.length) {
+      setFormError(`No entendí esto: ${invalid.join(', ')}`);
+      return;
+    }
+    if (!numbers.length) {
+      setFormError('Escribí al menos un número');
+      return;
+    }
+    if (totalNumbers != null && numbers.some((n) => n < 0 || n >= totalNumbers)) {
+      setFormError(`Hay números fuera de rango (tiene que ser entre 0 y ${totalNumbers - 1})`);
+      return;
+    }
+    assign.mutate(
+      { numbers, dni: cleanDni, name: name.trim() || undefined, note: note.trim() || undefined },
+      {
+        onSuccess: (data) => {
+          setResult(data);
+          setText('');
+        },
+      },
+    );
+  };
+
+  return (
+    <section className={styles.card}>
+      <h2 className={styles.section}>Asignar números a una persona</h2>
+      <p className={styles.prose}>
+        Para darle uno o más números a alguien puntual (regalo, corrección, venta con
+        datos reales) aunque todavía no se haya registrado en el sitio. Quedan a nombre
+        de su DNI: si en algún momento se registra con ese mismo DNI, va a ver estos
+        números en "Mis números" — no hace falta crearle una cuenta ahora. Solo se
+        pueden asignar números completamente disponibles: si alguno ya está reservado
+        (aunque sea sin pagar todavía) o ya tiene una compra, no se asigna NINGUNO y te
+        avisamos cuáles son.
+      </p>
+      <form onSubmit={onSubmit} className={styles.blockForm}>
+        <Field label="DNI de la persona" hint="7 u 8 dígitos, sin puntos.">
+          {(p) => (
+            <Input {...p} value={dni} onChange={(e) => setDni(e.target.value)} placeholder="12345678" inputMode="numeric" />
+          )}
+        </Field>
+        <Field label="Nombre" hint="Opcional, para identificarla en el panel.">
+          {(p) => (
+            <Input {...p} value={name} onChange={(e) => setName(e.target.value)} placeholder="Nombre y apellido" />
+          )}
+        </Field>
+        <Field label="Números" hint="Separados por coma o renglón. Podés usar rangos, ej: 1, 2, 5-10, 42">
+          {(p) => (
+            <Textarea
+              {...p}
+              rows={4}
+              placeholder={'1, 2, 5-10, 42'}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
+          )}
+        </Field>
+        <Field label="Nota" hint="Opcional, para tu propio registro.">
+          {(p) => (
+            <Input {...p} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Regalo por..." />
+          )}
+        </Field>
+        {formError && <p className={styles.err}>{formError}</p>}
+        {assign.isError && <p className={styles.err}>{assign.error.message}</p>}
+        <Button type="submit" loading={assign.isPending}>
+          Asignar números
+        </Button>
+      </form>
+      {result && (
+        <div className={styles.blockResult}>
+          <p>
+            ✓ {result.numbers.length} número{result.numbers.length === 1 ? '' : 's'} asignado
+            {result.numbers.length === 1 ? '' : 's'} al DNI {result.dni}: {result.numbers.join(', ')}
+          </p>
+        </div>
+      )}
+    </section>
   );
 }
 

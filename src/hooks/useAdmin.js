@@ -118,6 +118,18 @@ export function useBlockNumbers(raffleId) {
   });
 }
 
+export function useAssignNumbers(raffleId) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ numbers, dni, name, note }) =>
+      api(`/admin/raffles/${raffleId}/numbers/assign`, { method: 'POST', body: { numbers, dni, name, note } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'raffle', raffleId, 'stats'] });
+      qc.invalidateQueries({ queryKey: ['raffle-numbers', raffleId] });
+    },
+  });
+}
+
 // ---------------- Consultas (chat con la IA escalado a un asesor) ----------------
 
 export function useInquiries(status = 'open') {
