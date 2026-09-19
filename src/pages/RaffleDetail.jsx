@@ -7,6 +7,7 @@ import {
   useRaffleTickets,
   useBlockNumbers,
   useAssignNumbers,
+  useUpdateRaffle,
 } from '../hooks/useAdmin.js';
 import { Button } from '../components/Button.jsx';
 import { Field, Textarea, Input } from '../components/Field.jsx';
@@ -67,7 +68,8 @@ export default function RaffleDetail() {
           <h1 className={styles.title}>{r.title}</h1>
           <p className={styles.meta}>
             {r.status} · {r.mode === 'pick' ? 'elegí tu número' : 'números correlativos'}
-            {r.drawDate && ` · sorteo el ${formatDate(r.drawDate)}`}{' '}
+            {r.drawDate && ` · sorteo el ${formatDate(r.drawDate)}`}
+            {r.closesAt && ` · cierra el ${formatDateTime(r.closesAt)}`}{' '}
             {r.featured && '· destacado'}
           </p>
         </div>
@@ -82,6 +84,8 @@ export default function RaffleDetail() {
         <Stat label="Participantes" value={s ? formatInt(s.participants) : '…'} sub="personas distintas" />
         <Stat label="Avance" value={s?.progress != null ? `${s.progress}%` : '—'} />
       </div>
+
+      <WinnerCard raffle={r} raffleId={raffleId} />
 
       {r.mode === 'pick' ? (
         <section className={styles.card}>
@@ -132,6 +136,76 @@ export default function RaffleDetail() {
         </section>
       )}
     </div>
+  );
+}
+
+/**
+ * Cargar el número ganador. Independiente del modo (correlativos o "elegí
+ * tu número"): en los dos hay un ticket real por número. No cambia el
+ * estado del sorteo por su cuenta — si además querés marcarlo "Finalizado",
+ * hacelo en "Editar".
+ */
+function WinnerCard({ raffle, raffleId }) {
+  const [value, setValue] = useState('');
+  const [formError, setFormError] = useState('');
+  const update = useUpdateRaffle(raffleId);
+  const ticketsQuery = useRaffleTickets(raffleId);
+
+  const winningTicket = useMemo(() => {
+    if (raffle.winner?.number == null) return null;
+    return (ticketsQuery.data || []).find((t) => t.number === raffle.winner.number) || null;
+  }, [ticketsQuery.data, raffle.winner]);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    setFormError('');
+    const n = Number(value);
+    if (!Number.isInteger(n) || n < 0 || (raffle.totalNumbers != null && n >= raffle.totalNumbers)) {
+      setFormError(`Tiene que ser un número entre 0 y ${(raffle.totalNumbers || 1) - 1}`);
+      return;
+    }
+    update.mutate({ winningNumber: n }, { onSuccess: () => setValue('') });
+  };
+
+  const onClear = () => update.mutate({ winningNumber: null });
+
+  return (
+    <section className={clsx(styles.card, raffle.winner && styles.winnerCard)}>
+      <h2 className={styles.section}>Número ganador</h2>
+      {raffle.winner ? (
+        <div className={styles.winnerCurrent}>
+          <p className={styles.winnerNumber}>#{padTicket(raffle.winner.number, raffle.totalNumbers)}</p>
+          <p className={styles.muted}>
+            {winningTicket?.confirmed
+              ? `${winningTicket.holderName || 'Sin nombre cargado'}${winningTicket.dni && !winningTicket.offline ? ` · DNI ${winningTicket.dni}` : ''}`
+              : winningTicket
+                ? 'Este número está reservado pero todavía no confirmado — revisalo antes de anunciarlo.'
+                : 'Este número no tiene ningún ticket confirmado cargado — revisalo antes de anunciarlo.'}
+          </p>
+          <Button type="button" variant="ghost" size="sm" onClick={onClear} loading={update.isPending}>
+            Quitar ganador
+          </Button>
+        </div>
+      ) : (
+        <p className={styles.prose}>
+          Todavía no se cargó el número ganador. Apenas lo cargues, en la página del sorteo va a
+          aparecer un mensaje felicitando a ese número.
+        </p>
+      )}
+      <form onSubmit={onSubmit} className={styles.winnerForm}>
+        <Input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="Número ganador"
+          inputMode="numeric"
+        />
+        <Button type="submit" loading={update.isPending}>
+          {raffle.winner ? 'Cambiar' : 'Guardar'}
+        </Button>
+      </form>
+      {formError && <p className={styles.err}>{formError}</p>}
+      {update.isError && <p className={styles.err}>{update.error.message}</p>}
+    </section>
   );
 }
 

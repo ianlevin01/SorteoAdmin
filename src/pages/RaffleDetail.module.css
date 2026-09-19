@@ -103,6 +103,30 @@
   margin-bottom: var(--space-4);
 }
 
+/* ---- Número ganador ---- */
+.winnerCard {
+  background: var(--color-success-soft);
+  border-color: var(--color-success);
+}
+.winnerCurrent {
+  margin-bottom: var(--space-4);
+}
+.winnerNumber {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-success);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: var(--space-1);
+}
+.winnerForm {
+  display: flex;
+  gap: var(--space-2);
+  max-width: 20rem;
+}
+.winnerForm > :first-child {
+  flex: 1;
+}
+
 /* ---- Disponibilidad de números ---- */
 .gridLegend {
   display: flex;

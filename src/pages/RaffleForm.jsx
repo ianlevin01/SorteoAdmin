@@ -27,16 +27,23 @@ const EMPTY = {
   status: 'draft',
   featured: false,
   drawDate: '',
+  closesAt: '',
 };
 
-// ISO (backend) <-> valor de <input type=datetime-local>
-const isoToLocal = (iso) => {
+// ISO UTC (backend) -> valor de <input type="datetime-local">, mostrado en
+// hora de ARGENTINA — no en la del navegador de quien esté usando el panel.
+// Al mandar el formulario se manda el string de datetime-local tal cual (sin
+// convertir acá): el backend lo interpreta como hora de Argentina siempre,
+// así el resultado no depende de en qué huso horario esté el navegador (el
+// mismo criterio que arreglamos en la verificación de comprobantes — ver
+// backend/src/lib/argentinaTime.js).
+const AR_OFFSET_MS = 3 * 60 * 60 * 1000;
+const isoToArgentinaLocal = (iso) => {
   if (!iso) return '';
-  const d = new Date(iso);
+  const shifted = new Date(new Date(iso).getTime() - AR_OFFSET_MS);
   const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `${shifted.getUTCFullYear()}-${pad(shifted.getUTCMonth() + 1)}-${pad(shifted.getUTCDate())}T${pad(shifted.getUTCHours())}:${pad(shifted.getUTCMinutes())}`;
 };
-const localToIso = (local) => (local ? new Date(local).toISOString() : undefined);
 
 export default function RaffleForm() {
   const { raffleId } = useParams();
@@ -73,7 +80,8 @@ export default function RaffleForm() {
         totalNumbers: r.totalNumbers ?? 100000,
         status: r.status || 'draft',
         featured: Boolean(r.featured),
-        drawDate: isoToLocal(r.drawDate),
+        drawDate: isoToArgentinaLocal(r.drawDate),
+        closesAt: isoToArgentinaLocal(r.closesAt),
       });
     }
   }, [editing, existing.data]);
@@ -160,7 +168,10 @@ export default function RaffleForm() {
       totalNumbers: Number(form.totalNumbers),
       status: form.status,
       featured: form.featured,
-      drawDate: localToIso(form.drawDate),
+      // Se manda tal cual del input datetime-local ("YYYY-MM-DDTHH:mm"): el
+      // backend lo interpreta como hora de Argentina, no la de este navegador.
+      drawDate: form.drawDate || (editing ? null : undefined),
+      closesAt: form.closesAt || (editing ? null : undefined),
     };
 
     try {
@@ -356,9 +367,17 @@ export default function RaffleForm() {
                 <Input {...p} type="number" min="1" value={form.totalNumbers} onChange={(e) => set('totalNumbers', e.target.value)} />
               )}
             </Field>
-            <Field label="Fecha del sorteo">
+            <Field label="Fecha del sorteo" hint="Hora de Argentina.">
               {(p) => (
                 <Input {...p} type="datetime-local" value={form.drawDate} onChange={(e) => set('drawDate', e.target.value)} />
+              )}
+            </Field>
+            <Field
+              label="Cierre de ventas"
+              hint="Hora de Argentina. A partir de este momento no se pueden comprar más números. Dejalo vacío para no cerrar automáticamente."
+            >
+              {(p) => (
+                <Input {...p} type="datetime-local" value={form.closesAt} onChange={(e) => set('closesAt', e.target.value)} />
               )}
             </Field>
             <Field label="Estado">
